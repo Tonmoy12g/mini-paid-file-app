@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Paid Files - Mini App</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: system-ui, sans-serif; background: #0f0a24; color: #fff; }
+  .top { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; }
+  .top b { font-size: 20px; }
+  .top span { color: #a78bfa; }
+  .wrap { padding: 0 16px 90px 16px; max-width: 520px; margin: 0 auto; }
+  .card { background: #1e1445; border-radius: 18px; padding: 16px; margin: 12px 0; }
+  .card h2 { margin: 0 0 6px 0; font-size: 18px; }
+  .card p { margin: 4px 0; color: #d1c4ff; }
+  .price { font-size: 20px; font-weight: bold; color: #fff; }
+  button { border: 0; border-radius: 12px; padding: 12px 16px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
+  .buy { background: #22c55e; color: #fff; font-weight: bold; }
+  .back { background: #2e2266; color: #fff; }
+  .nav { position: fixed; left: 0; right: 0; bottom: 0; background: #1e1445; display: flex; justify-content: space-around; padding: 10px 0; max-width: 520px; margin: 0 auto; border-radius: 18px 18px 0 0; }
+  .nav button { width: auto; margin: 0; background: transparent; color: #d1c4ff; padding: 8px 10px; font-size: 14px; }
+  .nav button.active { color: #fff; font-weight: bold; }
+  .hidden { display: none; }
+  .note { background: #2e2266; border-radius: 12px; padding: 12px; color: #d1c4ff; font-size: 14px; }
+  input { width: 100%; padding: 10px; border-radius: 10px; border: 0; margin-top: 8px; }
+</style>
+</head>
+<body>
+<div class="top"><div><b>Paid <span>Files</span></b></div><div>📁 Mini App Demo</div></div>
+<div class="wrap">
+
+  <!-- SHOP VIEW -->
+  <div id="view-shop">
+    <div class="card"><h2>📁 Premium Files</h2><p>প্রোডাক্ট বেছে নাও, Buy চাপলে অর্ডার হবে।</p></div>
+    <div id="products"></div>
+    <div class="note">ডেমো প্রোডাক্ট — আসল প্রোডাক্ট CONFIG-এ বদলে নাও। পেমেন্ট ম্যানুয়াল, বটে টাকা যায় না।</div>
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div id="view-detail" class="hidden">
+    <div class="card">
+      <h2 id="d-name"></h2>
+      <p id="d-desc"></p>
+      <p class="price" id="d-price"></p>
+      <button class="buy" id="d-buy">🛒 Buy / অর্ডার করো</button>
+      <button class="back" onclick="showView('shop')">⬅️ ফিরে যাও</button>
+    </div>
+  </div>
+
+  <!-- ORDER VIEW -->
+  <div id="view-order" class="hidden">
+    <div class="card">
+      <h2>✅ অর্ডার পেয়েছি! (Pending)</h2>
+      <p id="o-text"></p>
+      <p>পেমেন্টের জন্য অ্যাডমিনের সাথে ইনবক্সে যোগাযোগ করো। অ্যাডমিন Approve করলে ফাইল পাঠাবে।</p>
+      <p id="o-pay"></p>
+      <button class="back" onclick="showView('shop')">🛍️ আরো দেখো</button>
+    </div>
+  </div>
+
+  <!-- HOW VIEW -->
+  <div id="view-how" class="hidden">
+    <div class="card">
+      <h2>❓ How it works</h2>
+      <p>১. Premium Files থেকে প্রোডাক্ট বেছে নাও।</p>
+      <p>২. Buy চাপলে অর্ডার হবে।</p>
+      <p>৩. ইনবক্সে পেমেন্ট করো।</p>
+      <p>৪. অ্যাডমিন Approve করলে ফাইল পাঠাবে।</p>
+      <p>এই মিনি অ্যাপে ব্যালেন্স, Add Money, ট্রেডিং, প্রেডিকশন — কিছু নাই।</p>
+    </div>
+  </div>
+
+  <!-- SUPPORT VIEW -->
+  <div id="view-support" class="hidden">
+    <div class="card">
+      <h2>🛟 Support</h2>
+      <p id="s-text">সাপোর্টের জন্য অ্যাডমিনের সাথে যোগাযোগ করো।</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="nav">
+  <button id="nav-shop" class="active" onclick="showView('shop')">🛍️ Shop</button>
+  <button id="nav-how" onclick="showView('how')">❓ How</button>
+  <button id="nav-support" onclick="showView('support')">🛟 Support</button>
+</div>
+
+<script>
+// ===== CONFIG: nijer product / support ekhane bodle nao =====
+// Payment number ekhane REAL number dio na demo-te.
+// Real mini app-e number Admin Panel / backend theke asbe.
+var CONFIG = {
+  supportText: "সাপোর্টের জন্য অ্যাডমিনের সাথে যোগাযোগ করো।",
+  paymentText: "Payment number Admin-er sathe inbox-e jogajog kore nao."
+};
+var PRODUCTS = [
+  { id: 1, name: "Sample Premium File", price: 100, desc: "Sample product - Admin Panel / CONFIG diye bodle nao." },
+  { id: 2, name: "Sample Bot File", price: 100, desc: "Sample bot file - demo only." },
+  { id: 3, name: "Sample Design Pack", price: 150, desc: "Sample design pack - demo only." }
+];
+var selected = null;
+
+function showView(name) {
+  ["shop", "detail", "order", "how", "support"].forEach(function(v) {
+    document.getElementById("view-" + v).classList.add("hidden");
+  });
+  document.getElementById("view-" + name).classList.remove("hidden");
+  ["shop", "how", "support"].forEach(function(v) {
+    var b = document.getElementById("nav-" + v);
+    if (b) b.classList.toggle("active", v === name);
+  });
+  window.scrollTo(0, 0);
+}
+
+function renderProducts() {
+  var el = document.getElementById("products");
+  el.innerHTML = "";
+  PRODUCTS.forEach(function(p) {
+    var div = document.createElement("div");
+    div.className = "card";
+    div.innerHTML = "<h2>📦 " + p.name + "</h2><p>" + p.desc + "</p><p class='price'>" + p.price + " টাকা</p>";
+    var btn = document.createElement("button");
+    btn.className = "buy";
+    btn.textContent = "দেখো / Buy";
+    btn.onclick = function() { openDetail(p.id); };
+    div.appendChild(btn);
+    el.appendChild(div);
+  });
+}
+
+function openDetail(id) {
+  selected = PRODUCTS.find(function(p) { return p.id === id; });
+  if (!selected) return;
+  document.getElementById("d-name").textContent = "📦 " + selected.name;
+  document.getElementById("d-desc").textContent = selected.desc;
+  document.getElementById("d-price").textContent = selected.price + " টাকা";
+  showView("detail");
+}
+
+document.getElementById("d-buy").onclick = function() {
+  if (!selected) return;
+  document.getElementById("o-text").textContent =
+    "📦 প্রোডাক্ট: " + selected.name + " | 💰 দাম: " + selected.price + " টাকা";
+  document.getElementById("o-pay").textContent = CONFIG.paymentText;
+  // Telegram Mini App hole order data bot-ke pathano jabe, na hole demo only.
+  try {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.sendData) {
+      window.Telegram.WebApp.sendData(JSON.stringify({ product: selected.name, price: selected.price }));
+    }
+  } catch (e) {}
+  showView("order");
+};
+
+document.getElementById("s-text").textContent = CONFIG.supportText;
+renderProducts();
+// Telegram Mini App hole WebApp ready/expand koro, na hole browser demo hisebe cholbe.
+try {
+  if (window.Telegram && window.Telegram.WebApp) {
+    window.Telegram.WebApp.ready();
+    window.Telegram.WebApp.expand();
+  }
+} catch (e) {}
+</script>
+</body>
+</html>
