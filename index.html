@@ -174,7 +174,7 @@
       box-shadow: 0 0 0 1px #f5d061;
     }
   </style>
-</head>
+<style>#banglaSongNowPlayingBar{display:none !important;}</style></head>
 <body class="min-h-screen flex justify-center bg-[#050507] text-zinc-100 select-none">
 
   <!-- CELEBRATION CONFETTI CANVAS -->
@@ -304,7 +304,7 @@
     </header>
 
     <!-- LIVE BANGLA SONG & LYRICS TICKER BAR -->
-    <div id="banglaSongNowPlayingBar" class="relative z-10 px-4 pt-2">
+    <div id="banglaSongNowPlayingBar" class="relative z-10 px-4 pt-2" style="display:none !important">
       <div class="px-3 py-1.5 rounded-xl bg-zinc-900/90 border border-amber-500/25 flex items-center justify-between gap-2">
         <div class="flex items-center gap-2 min-w-0 flex-1">
           <span class="text-xs shrink-0">🎵</span>
@@ -1343,7 +1343,7 @@
         return Math.max(0.05, Math.min(1.0, v / 100));
       }
 
-      function updateNowPlayingBar(title, badgeText, lyricText) {
+      function updateNowPlayingBar(title, badgeText, lyricText) { return; // music name bar fully removed
         const titleEl = document.getElementById('nowPlayingSongTitle');
         const badgeEl = document.getElementById('nowPlayingSourceBadge');
         const lyricEl = document.getElementById('nowPlayingLyricLine');
