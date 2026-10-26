@@ -2516,10 +2516,10 @@
           if (musicEnabled) {
             startBanglaMusic();
             if (uploadedCustomSongDataUri && useUploadedMp3Mode) {
-              showToast(`🎵 বাজছে: ${uploadedCustomSongName || 'Music Remix VIP Song'}`, 'success');
+              showToast('🎵 Music বাজছে', 'success');
             } else {
               const idx = Number(state.settings.banglaTrackIndex || 0) % BANGLA_MELODIES.length;
-              showToast(`🎵 বাজছে: ${BANGLA_MELODIES[idx].name}`, 'success');
+              showToast('🎵 Music বাজছে', 'success');
             }
           } else {
             stopBanglaMusic();
@@ -2574,7 +2574,7 @@
               saveState();
               stopBanglaMusic();
               startBanglaMusic();
-              showToast(`🎵 বাজছে: ${uploadedCustomSongName}`, 'success');
+              showToast('🎵 Music বাজছে', 'success');
             } else {
               state.settings.banglaTrackIndex = nextIdx % BANGLA_MELODIES.length;
               musicStepIndex = 0;
